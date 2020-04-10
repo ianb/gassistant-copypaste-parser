@@ -10,20 +10,31 @@ function parseControl(options) {
 
 var months = {
   january: 1,
+  jan: 1,
   february: 2,
+  feb: 2,
   march: 3,
+  mar: 3,
   april: 4,
+  apr: 4,
   may: 5,
   june: 6,
+  jun: 6,
   july: 7,
+  jul: 7,
   august: 8,
+  aug: 8,
   september: 9,
+  sep: 9,
   october: 10,
+  oct: 10,
   november: 11,
+  nov: 11,
   december: 12,
+  dec: 12,
 };
 
-var dateRegex = /today|yesterday|\d\d?\s+(january|february|march|april|may|june|july|august|september|october|november|december)/i;
+var dateRegex = /today|yesterday|\d\d?\s+(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i;
 var yearRegex = /\d{4}/;
 var timeRegex = /^\s*(\d\d:\d\d)\s*(am|pm)?/i;
 
@@ -41,7 +52,6 @@ function parseText(text) {
       // It's a date header
       var yearMatch = yearRegex.exec(line);
       if (yearMatch) {
-        console.log("got year", yearMatch[0], parseInt(yearMatch[0], 10));
         activeYear = parseInt(yearMatch[0], 10);
       }
       if (match[0].toLowerCase() === "today") {
@@ -151,7 +161,6 @@ function createController(values, onSubmit) {
   function checkElement(event) {
     var tr = findParent(event.target, "tr");
     var index = parseInt(tr.getAttribute("data-index"), 10);
-    console.log("click on", event.target, index, removed[index]);
     if (removed[index]) {
       delete removed[index];
       tr.childNodes[0].childNodes[0].checked = false;
@@ -201,7 +210,6 @@ function serialize(values) {
   var lines = [];
   for (var i = 0; i < values.length; i++) {
     var v = values[i];
-    console.log("one line", v);
     lines.push(
       String(v.year || "????") +
         "-" +
@@ -216,7 +224,6 @@ function serialize(values) {
         " " +
         v.utterance
     );
-    console.log("line", lines[lines.length - 1]);
   }
   return lines.join("\n");
 }
