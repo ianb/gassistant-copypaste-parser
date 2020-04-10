@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Example of using the parser</title>
+    <script src="parser.js"></script>
+    <style>
+      textarea {
+        width: 80%;
+        height: 6em;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      Go to
+      <a
+        href="https://myactivity.google.com/item?product=31"
+        rel="noopener"
+        target="_blank"
+        >https://myactivity.google.com/item?product=31</a
+      >
+      then scroll down to load more items. Finally use Select All, Copy, and
+      then Paste below:
+    </p>
+    <div>
+      <textarea id="input" placeholder="Paste here"></textarea>
+    </div>
+    <div>
+      <button
+        onclick="
+      parseControl({
+        inputText: document.querySelector('#input').value,
+        controlContainer: document.querySelector('#control-container'),
+        onOutputText(text) {
+          var output = document.querySelector('#output');
+          output.value = text;
+          output.scrollIntoView();
+        },
+      });
+      "
+      >
+        Parse
+      </button>
+    </div>
+    <div id="control-container">... waiting ...</div>
+    <div>
+      <textarea id="output" placeholder="Output will appear here"></textarea>
+    </div>
+  </body>
+</html>
