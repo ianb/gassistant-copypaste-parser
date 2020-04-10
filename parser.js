@@ -108,6 +108,14 @@ function parseText(text) {
         };
       }
     }
+    if (/Looks like you've reached the end/i.test(line)) {
+      values.push({
+        utterance: "REACHED_END",
+        year: activeYear,
+        month: activeMonth,
+        day: activeDay,
+      });
+    }
   }
   return values;
 }
@@ -141,6 +149,10 @@ function findParent(node, tagName) {
 function createController(values, onSubmit) {
   var button1 = make("button", null, [text("I'm done selecting")]);
   var button2 = button1.cloneNode(true);
+  var innerDiv = make("div", {
+    style:
+      "max-height: 20em; overflow-y: scroll; margin: 0.5em; padding: 1em; border: 2px solid #999",
+  });
   var div = make("div", null, [
     make("style", null, [
       text(
@@ -150,13 +162,14 @@ function createController(values, onSubmit) {
     make("h3", null, [text("Your history:")]),
     make("p", null, [text("Click on any items you'd like to remove")]),
     button1,
+    innerDiv,
+    button2,
   ]);
   var table = make("table", {
     cellspacing: "0",
     id: "gassistant-parser",
-    border: "1",
   });
-  div.appendChild(table);
+  innerDiv.appendChild(table);
   var removed = {};
   function checkElement(event) {
     var tr = findParent(event.target, "tr");
@@ -173,6 +186,9 @@ function createController(values, onSubmit) {
   }
   for (var i = 0; i < values.length; i++) {
     var value = values[i];
+    if (value.utterance === "REACHED_END") {
+      continue;
+    }
     var checkTd = make("td", null, [make("input", { type: "checkbox" })]);
     checkTd.addEventListener("click", checkElement);
     var utteranceTd = make("td", null, [text(value.utterance)]);
@@ -192,7 +208,6 @@ function createController(values, onSubmit) {
   }
   button1.addEventListener("click", clickButton);
   button2.addEventListener("click", clickButton);
-  div.appendChild(button2);
   return div;
 }
 
