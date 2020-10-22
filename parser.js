@@ -38,12 +38,12 @@ var dateRegex = /today|yesterday|\d\d?\s+(january|february|march|april|may|june|
 var yearRegex = /\d{4}/;
 var timeRegex = /^\s*(\d\d:\d\d)\s*(am|pm)?/i;
 
-function parseText(text) {
+function parseText(aText) {
   var now = new Date();
   var activeYear = now.getFullYear();
   var activeDay = null;
   var activeMonth = null;
-  var lines = text.split("\n");
+  var lines = aText.split("\n");
   var values = [];
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
@@ -135,7 +135,7 @@ function make(tag, attrs, children) {
   return el;
 }
 
-function text(t) {
+function makeText(t) {
   return document.createTextNode(t);
 }
 
@@ -147,7 +147,11 @@ function findParent(node, tagName) {
 }
 
 function createController(values, onSubmit) {
-  var button1 = make("button", null, [text("I'm done selecting")]);
+  var button1 = make(
+    "button",
+    { type: "button" },
+    new Array(makeText("I'm done selecting"))
+  );
   var button2 = button1.cloneNode(true);
   var innerDiv = make("div", {
     style:
@@ -155,12 +159,16 @@ function createController(values, onSubmit) {
   });
   var div = make("div", null, [
     make("style", null, [
-      text(
+      makeText(
         "#gassistant-parser tr:hover td {background-color: rgba(0, 0, 0, 0.1)}"
       ),
     ]),
-    make("h3", null, [text("Your history:")]),
-    make("p", null, [text("Click on any items you'd like to remove")]),
+    make("h3", null, new Array(makeText("Your history:"))),
+    make(
+      "p",
+      null,
+      new Array(makeText("Click on any items you'd like to remove"))
+    ),
     button1,
     innerDiv,
     button2,
@@ -191,7 +199,7 @@ function createController(values, onSubmit) {
     }
     var checkTd = make("td", null, [make("input", { type: "checkbox" })]);
     checkTd.addEventListener("click", checkElement);
-    var utteranceTd = make("td", null, [text(value.utterance)]);
+    var utteranceTd = make("td", null, new Array(makeText(value.utterance)));
     utteranceTd.addEventListener("click", checkElement);
     var tr = make("tr", { "data-index": i }, [checkTd, utteranceTd]);
     table.appendChild(tr);
@@ -242,3 +250,20 @@ function serialize(values) {
   }
   return lines.join("\n");
 }
+
+// This code is specific to one SurveyGizmo form:
+var textarea = $("#sgE-5529689-8-31-element");
+var container = $(make("div", null, new Array(makeText("... waiting ..."))));
+var nextButton = $("#sg_NextButton");
+nextButton.attr("disabled", "1");
+textarea.after(container);
+textarea.change(function () {
+  parseControl({
+    inputText: textarea.val(),
+    controlContainer: container.get(0),
+    onOutputText: function (text) {
+      $("#sgE-5529689-8-32-element").val(text);
+      nextButton.attr("disabled", null);
+    },
+  });
+});
